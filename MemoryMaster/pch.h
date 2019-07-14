@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
+#include <Psapi.h>
 #include <TlHelp32.h>
 
 
