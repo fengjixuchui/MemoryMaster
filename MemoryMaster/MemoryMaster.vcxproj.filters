@@ -30,6 +30,9 @@
     <ClInclude Include="MemoryMaster.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="External.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -39,6 +42,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="WinUtils.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="External.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
