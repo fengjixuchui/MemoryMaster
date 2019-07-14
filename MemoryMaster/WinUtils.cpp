@@ -1,3 +1,6 @@
+
+
+#include "pch.h"
 #include "WinUtils.h"
 
 DWORD MemoryMaster::WinUtils::GetPID(const char* processName) {

@@ -1,1 +1,5 @@
-﻿
+﻿  pch.cpp
+  External.cpp
+  SigFinder.cpp
+  WinUtils.cpp
+  MemoryMaster.vcxproj -> C:\Users\Riza\source\repos\MemoryMaster\x64\Release\MemoryMaster.lib
