@@ -1,0 +1,5 @@
+﻿  Создание кода
+  Previous IOBJ not found, fall back to full compilation.
+C:\Users\Riza\source\repos\MemoryMaster\MemoryMaster\WinUtils.cpp(11): error C4700: использована неинициализированная локальная переменная "bytesRequired"
+  All 9 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+LINK : fatal error LNK1257: не удалось создать код
