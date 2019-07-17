@@ -86,3 +86,73 @@ void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed
 
 	return nullptr;
 }
+
+void* MemoryMaster::WinUtils::GetModulePEB(const LPWSTR moduleName) {
+
+#ifdef _WIN64
+	UINT peb = (UINT)__readgsqword(0x60);
+	UINT offset = 0x18;
+#else
+	UINT peb = (UINT)__readfsdword(0x30);
+	UINT offset = 0x0C;
+#endif
+
+	UINT moduleListAddr = *(UINT*)(peb + offset);
+	PVOID start = *(PVOID*)(moduleListAddr + offset);
+
+	LDR_ENTRY * mod = (LDR_ENTRY*)start;
+	mod = (LDR_ENTRY*)mod->Orders[0].Flink;
+
+	while ((UINT)start != (UINT)mod) {
+
+		if (mod->Base != NULL)
+		{
+			if (!lstrcmpiW((LPCWSTR)mod->DllName.Buffer, moduleName))
+			{
+				return mod->Base;
+			}
+		}
+
+		mod = (LDR_ENTRY*)mod->Orders[0].Flink;
+	}
+
+	return 0;
+}
+
+void* MemoryMaster::WinUtils::GetFunctionFromExports(const char* functionName, PVOID base) {
+	IMAGE_DOS_HEADER* dosHeader = (IMAGE_DOS_HEADER*)base;
+
+#ifdef _WIN64
+	IMAGE_NT_HEADERS64* ntHeaders = (IMAGE_NT_HEADERS64*)((UINT)base + dosHeader->e_lfanew);
+#else
+	IMAGE_NT_HEADERS* ntHeaders = (IMAGE_NT_HEADERS*)((UINT)base + dosHeader->e_lfanew);
+#endif
+	
+
+	IMAGE_EXPORT_DIRECTORY * exportTable =
+		(IMAGE_EXPORT_DIRECTORY*)((UINT)base + ntHeaders->OptionalHeader.DataDirectory[0].VirtualAddress);
+
+	DWORD * functions = (DWORD*)((UINT)base + exportTable->AddressOfFunctions);
+	WORD * ords = (WORD*)((UINT)base + exportTable->AddressOfNameOrdinals);
+	DWORD * names = (DWORD*)((UINT)base + exportTable->AddressOfNames);
+
+	for (int i = 0; i < exportTable->NumberOfNames; i++) {
+		char* data = (char*)((UINT)base + (UINT)names[i]);
+
+		if (lstrcmpA(functionName, data) == 0) {
+			return (void*)((UINT)base + (UINT)functions[ords[i]]);
+		}
+	}
+
+	return nullptr;
+}
+
+void* MemoryMaster::WinUtils::GetFunctionPEB(LPWSTR dllName, const char* functionName) {
+	void* moduleBase = MemoryMaster::WinUtils::GetModulePEB(dllName);
+
+	if (!moduleBase) {
+		return nullptr;
+	}
+
+	return MemoryMaster::WinUtils::GetFunctionFromExports(functionName, moduleBase);
+}
